@@ -36,6 +36,8 @@ struct camera
 { //structure camera
   vect position;
   vect direction;
+  vect u;
+  vect v;
   double tailleX;
   double tailleY;
 };
