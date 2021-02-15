@@ -46,6 +46,7 @@ void oppose(vect* A);
 double norme(vect* vecteur);
 void multiplicationScalaire(vect* A, double scalaire);
 double scalaire(vect* A, vect* B);
+void pVectoriel(vect* A, vect* B, vect* C);
 
 double scalaire(vect* A, vect* B){
   //produit scalaire de deux vecteurs
@@ -77,4 +78,11 @@ void add(vect* A, vect* B, vect* C){
   C->x = A->x + B->x;
   C->y = A->y + B->y;
   C->z = A->z + B->z;
+}
+
+void pVectoriel(vect* A, vect* B, vect* C){
+  //C = A ^ B
+  C->x = A->y * B->z - A->z * B->y;
+  C->y = A->z * B->x - A->x * B->z;
+  C->z = A->x * B->y - A->y * B->x;
 }
