@@ -4,6 +4,9 @@
 
 //PROTOTYPES
 void projeter(vect* A, double p[2], camera* camera);
+void actualiserUV(camera* camera);
+void projeterPersp(vect* A, double p[], camera* camera);
+void afficherTriangle2D(triangle2D* t2D, int COLS, int LINES, double MAXX, double MAXY);
 
 //FONCTIONS
 void actualiserUV(camera* camera){
@@ -28,9 +31,51 @@ void actualiserUV(camera* camera){
 
 }
 
-void projeter(vect* A, double p[], camera* camera){
-  //projette tout vecteur sur l'écran
-  p[0] = scalaire(A, &camera->u);
-  p[1] = scalaire(A, &camera->v);
+void projeterOrtho(vect* A, double p[], camera* camera){
+  //projette tout vecteur sur l'écran de façon orthographique
 
+  vect Aprime; //A dans le repere de la camera
+  vect minusPos;
+
+  minusPos = camera->position;
+  oppose(&minusPos);
+  add(A, &minusPos, &Aprime);
+
+  p[0] = scalaire(&Aprime, &camera->u);
+  p[1] = scalaire(&Aprime, &camera->v);
+}
+
+void projeterPersp(vect* A, double p[], camera* camera){
+  //calcul de teta et phi
+
+  vect Aprime; //A dans le repere de la camera
+  vect minusPos;
+
+  minusPos = camera->position;
+  oppose(&minusPos);
+  add(A, &minusPos, &Aprime);
+
+  //coordonnées de A prime dans le rep direction v u
+  double x;
+  double y;
+  double z;
+  double module;
+
+  module = norme(&Aprime);
+  x = scalaire(&Aprime, &camera->direction);
+  y = scalaire(&Aprime, &camera->v);
+  z = scalaire(&Aprime, &camera->u);
+
+  //theta:
+  p[0] = acos(z/module);
+  //phi:
+  if (x == 0){
+    p[1] = 1.57;
+  } else {
+    p[1] = atan(y/x);
+  }
+}
+
+void afficherTriangle2D(triangle2D* t2D, int COLS, int LINES, double MAXX, double MAXY){
+  //vérifie si un triangle 2D est hors cadre et le cas échéant, l'affiche
 }

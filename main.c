@@ -25,7 +25,7 @@ int main(){
   point.z=1;
 
   actualiserUV(&camera);
-  projeter(&point, inutile, &camera);
+  projeterPersp(&point, inutile, &camera);
   printf("%f\n", inutile[0]);
   printf("%f\n", inutile[1]);
 
