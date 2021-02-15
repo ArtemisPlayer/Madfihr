@@ -3,11 +3,9 @@
 #include <string.h>
 #include "vecteurs.c"
 #include "camera.c"
-
+#include "ecran.c"
 
 int main(){
-  const int COLS = 100;
-  const int LINES = 70;
 
   camera camera;
   camera.position.x = 0;
