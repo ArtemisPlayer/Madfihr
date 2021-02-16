@@ -76,6 +76,3 @@ void projeterPersp(vect* A, double p[], camera* camera){
   }
 }
 
-void afficherTriangle2D(triangle2D* t2D, int COLS, int LINES, double MAXX, double MAXY){
-  //vérifie si un triangle 2D est hors cadre et le cas échéant, l'affiche
-}

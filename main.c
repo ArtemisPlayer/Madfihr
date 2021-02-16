@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "SDL/SDL.h"
+
 #include "vecteurs.c"
 #include "camera.c"
 #include "ecran.c"
+
 
 int main(){
 
@@ -26,6 +29,8 @@ int main(){
   projeterPersp(&point, inutile, &camera);
   printf("%f\n", inutile[0]);
   printf("%f\n", inutile[1]);
+
+  runEcran();
 
   return 0;
 }

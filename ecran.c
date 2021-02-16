@@ -2,36 +2,44 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct ecran ecran;
-struct ecran
+void initEcran(SDL_Surface* ecran){
+    
+  SDL_Init(SDL_INIT_VIDEO);
+
+  ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
+  SDL_WM_SetCaption("Madfihr", NULL);
+}
+
+void quitEcran(){
+  SDL_Quit();
+}
+
+void dessinerTriangle(SDL_Surface* ecran, triangle2D* t2D){
+  //dessine un triangle 2d
+  //va etre galere
+}
+
+void runEcran()
 {
-  int COLS;
-  int LINES;
-  char chaine[7000];
-};
+  int continuer = 1;
+  SDL_Surface *ecran;
 
-void initEcran(ecran* ecran);
-void setPoint(int col, int ligne, ecran* ecran, char couleur);
-void afficher(ecran* ecran);
+  initEcran(ecran);
 
-void initEcran(ecran* ecran){
-  ecran->COLS = 100;
-  ecran->LINES = 70;
-  for (int i = 0; i<7000; i++){
-    ecran->chaine[i] = ' ';
-  }
-}
-
-void setPoint(int col, int ligne, ecran* ecran, char couleur){
-  ecran->chaine[ligne*100 + col] = couleur;
-}
-
-void afficher(ecran* ecran){
-  printf("\e[1;1H\e[2J");//clear screen (linux only)
-  for (int i = 0; i < 7000; i++){
-    printf("%c", ecran->chaine[i]);
-    if ((i+1)%100 == 0){//si en fin de ligne alors
-      printf("%c", '\n');
+  SDL_Event event;
+ 
+  while (continuer){
+    SDL_WaitEvent(&event);
+    switch(event.type)
+    {
+      case SDL_QUIT:
+        continuer = 0;
     }
   }
+  quitEcran();
 }
+
+
+
+
+
