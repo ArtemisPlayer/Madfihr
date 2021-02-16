@@ -19,7 +19,6 @@ struct triangle3D
   vect A;
   vect B;
   vect C;
-  char color;
 };
 
 typedef struct triangle2D triangle2D;
@@ -28,7 +27,6 @@ struct triangle2D
   double p1[2];
   double p2[2];
   double p3[2];
-  char color;
 };
 
 typedef struct camera camera;

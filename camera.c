@@ -69,10 +69,34 @@ void projeterPersp(vect* A, double p[], camera* camera){
   //theta:
   p[0] = acos(z/module);
   //phi:
-  if (x == 0){
+  if (x == (double) 0){
     p[1] = 1.57;
   } else {
+    printf("x = %f  ", x);
+    printf("atan de %f ", y/x);
+    printf("= %f\n", atan(y/x));
     p[1] = atan(y/x);
   }
 }
 
+void projetterT3D(triangle2D* t2D, triangle3D* t3D, camera* camera){
+  //affiche en triangle 2D un triangle 3D vu par camera
+  double multiplicateurX = 20;
+  double multiplicateurY = 20;
+  double p[2];
+
+  projeterPersp(&t3D->A, p, camera);
+  printf("%f ", p[0]);
+  printf("%f\n", p[1]);
+  t2D->p1[0] = p[0]*multiplicateurX;
+  t2D->p1[1] = p[1]*multiplicateurY;
+
+  projeterPersp(&t3D->B, p, camera);
+  t2D->p2[0] = p[0]*multiplicateurX;
+  t2D->p2[1] = p[1]*multiplicateurY;
+
+  projeterPersp(&t3D->C, p, camera);
+  t2D->p3[0] = p[0]*multiplicateurX;
+  t2D->p3[1] = p[1]*multiplicateurY;
+
+}
