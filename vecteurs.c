@@ -49,6 +49,7 @@ double norme(vect* vecteur);
 void multiplicationScalaire(vect* A, double scalaire);
 double scalaire(vect* A, vect* B);
 void pVectoriel(vect* A, vect* B, vect* C);
+int isAngle2DObtu(double A[2], double B[2], double C[2]);
 
 double scalaire(vect* A, vect* B){
   //produit scalaire de deux vecteurs
@@ -87,4 +88,16 @@ void pVectoriel(vect* A, vect* B, vect* C){
   C->x = A->y * B->z - A->z * B->y;
   C->y = A->z * B->x - A->x * B->z;
   C->z = A->x * B->y - A->y * B->x;
+}
+
+int isAngle2DObtu(double A[2], double B[2], double C[2]){
+  //angle ABC sens trigo
+  double pScalaire;
+  pScalaire = (C[0] - B[0])*(A[0] - B[0]) + (A[1] - B[1])*(C[1] - B[1]);
+  if (pScalaire >= 0){
+    return 1;//true
+  } else {
+    return 0;//false
+  }
+
 }
