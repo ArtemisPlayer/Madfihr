@@ -10,6 +10,7 @@
 
 int main(){
 
+  //INITIALISATION
   camera camera;
   camera.position.x = 0;
   camera.position.y = 0;
@@ -18,18 +19,14 @@ int main(){
   camera.direction.y = 0;
   camera.direction.z = 0;
 
-  double inutile[2];
-
   vect point;
   point.x=1;
   point.y=1;
   point.z=1;
 
   actualiserUV(&camera);
-  projeterPersp(&point, inutile, &camera);
-  printf("%f\n", inutile[0]);
-  printf("%f\n", inutile[1]);
 
+  //AFFICHAGE
   runEcran();
 
   return 0;

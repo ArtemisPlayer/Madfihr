@@ -2,17 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void initEcran(SDL_Window* ecran){
-    
-  SDL_Init(SDL_INIT_EVERYTHING);
-  ecran = SDL_CreateWindow("Madfihr", 20, 20, 640, 480, SDL_WINDOW_SHOWN);
-}
-
 void quitEcran(){
   SDL_Quit();
 }
 
-void dessinerTriangle(SDL_Surface *ecran, triangle2D* t2D){
+void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
   //dessine un triangle 2d
   //on suppose que le triangle a deja été porté aux coordonnées de l
   // 'ecran , ex : p[0] = 200; 300
@@ -66,27 +60,48 @@ void dessinerTriangle(SDL_Surface *ecran, triangle2D* t2D){
 
   for (int x = minX; x <= maxX; x++){
     for (int y = minY; y <= maxY; y++){
-      p.x = x;
-      p.y = y;
+      p.x = (double) x;
+      p.y = (double) y;
       if (IsPointInTri(&p, &v1, &v2, &v3)){
-        // 
-
+        printf("x = %f ", p.x);
+        printf("y = %f\n", p.y);
+        SDL_RenderDrawPoint(renderer, x, y);
       }
     }
   }
-
-
+  SDL_RenderPresent(renderer);
 }
 
 void runEcran()
 {
   int continuer = 1;
   SDL_Window *ecran;
-
-  initEcran(ecran);
-
+  SDL_Renderer *renderer;
+  SDL_Color white = {255, 255, 255, 255};
   SDL_Event event;
+
+  ecran = SDL_CreateWindow("Madfihr", 20, 20, 640, 480, SDL_WINDOW_SHOWN);
+  renderer = SDL_CreateRenderer(ecran, -1, SDL_RENDERER_ACCELERATED);
+  
+  SDL_SetRenderDrawColor(renderer, white.r, white.g, white.b, white.a);
  
+ 
+//----------------
+  triangle2D demo;
+
+  demo.p1[0] = 20;
+  demo.p1[1] = 20;
+
+  demo.p2[0] = 20;
+  demo.p2[1] = 70;
+
+  demo.p3[0] = 70;
+  demo.p3[1] = 20;
+
+  dessinerTriangle(renderer, &demo);
+
+//----------------
+
   while (continuer){
     SDL_WaitEvent(&event);
     switch(event.type)
