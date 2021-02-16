@@ -42,6 +42,12 @@ struct camera
   double tailleY;
 };
 
+typedef struct Point Point;
+struct Point{//vecteur 2D
+  double x;
+  double y;
+};
+
 //PROTOTYPES
 void add(vect* A, vect* B, vect* C);
 void oppose(vect* A);
@@ -101,3 +107,24 @@ int isAngle2DObtu(double A[2], double B[2], double C[2]){
   }
 
 }
+
+//VECTEURS 2D
+
+double Sign(Point* v1, Point* v2, Point* v3){  
+  return (v1->x - v3->x) * (v2->y - v3->y) - (v2->x - v3->x) * (v1->y - v3->y);
+}
+
+int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3){
+  int b1, b2, b3;
+  b1, b2, b3 = 0;
+  if (Sign(p, v1, v2) < 0.0) b1 = 1;    
+  if (Sign(p, v2, v3) < 0.0) b2 = 1;    
+  if (Sign(p, v3, v1) < 0.0) b3 = 1;
+  int sum;
+  sum = b1+b2+b3;
+  if (sum == 0 || sum == 3){
+    return 1;
+  } else {
+    return 0;
+  }
+}    

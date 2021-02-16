@@ -2,12 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-void initEcran(SDL_Surface* ecran){
+void initEcran(SDL_Window* ecran){
     
-  SDL_Init(SDL_INIT_VIDEO);
-
-  ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
-  SDL_WM_SetCaption("Madfihr", NULL);
+  SDL_Init(SDL_INIT_EVERYTHING);
+  ecran = SDL_CreateWindow("Madfihr", 20, 20, 640, 480, SDL_WINDOW_SHOWN);
 }
 
 void quitEcran(){
@@ -16,8 +14,6 @@ void quitEcran(){
 
 void dessinerTriangle(SDL_Surface *ecran, triangle2D* t2D){
   //dessine un triangle 2d
-  //va etre galere
-
   //on suppose que le triangle a deja été porté aux coordonnées de l
   // 'ecran , ex : p[0] = 200; 300
   int maxX;
@@ -54,9 +50,28 @@ void dessinerTriangle(SDL_Surface *ecran, triangle2D* t2D){
   }
 
   //on sait que les pixels à examiner seront entre minX - maxX, id Y
+  Point p;
+  Point v1;
+  Point v2;
+  Point v3;
+
+  v1.x = t2D->p1[0];
+  v1.y = t2D->p1[1];
+
+  v2.x = t2D->p2[0];
+  v2.y = t2D->p2[1];
+
+  v3.x = t2D->p3[0];
+  v3.y = t2D->p3[1];
+
   for (int x = minX; x <= maxX; x++){
     for (int y = minY; y <= maxY; y++){
-      //
+      p.x = x;
+      p.y = y;
+      if (IsPointInTri(&p, &v1, &v2, &v3)){
+        // 
+
+      }
     }
   }
 
@@ -66,7 +81,7 @@ void dessinerTriangle(SDL_Surface *ecran, triangle2D* t2D){
 void runEcran()
 {
   int continuer = 1;
-  SDL_Surface *ecran;
+  SDL_Window *ecran;
 
   initEcran(ecran);
 
@@ -82,8 +97,4 @@ void runEcran()
   }
   quitEcran();
 }
-
-
-
-
 
