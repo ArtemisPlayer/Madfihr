@@ -78,20 +78,20 @@ void projeterPersp(vect* A, double p[], camera* camera){
 
 void projetterT3D(triangle2D* t2D, triangle3D* t3D, camera* camera){
   //affiche en triangle 2D un triangle 3D vu par camera
-  double multiplicateurX = 20;
-  double multiplicateurY = 20;
+  double multiplicateurX = 100;
+  double multiplicateurY = -100;
   double p[2];
 
-  projeterPersp(&t3D->A, p, camera);
-  t2D->p1[0] = p[0]*multiplicateurX;
-  t2D->p1[1] = p[1]*multiplicateurY;
+  projeterOrtho(&t3D->A, p, camera);
+  t2D->p1[0] = p[0]*multiplicateurX + 320;
+  t2D->p1[1] = p[1]*multiplicateurY + 240;
 
-  projeterPersp(&t3D->B, p, camera);
-  t2D->p2[0] = p[0]*multiplicateurX;
-  t2D->p2[1] = p[1]*multiplicateurY;
+  projeterOrtho(&t3D->B, p, camera);
+  t2D->p2[0] = p[0]*multiplicateurX + 320;
+  t2D->p2[1] = p[1]*multiplicateurY + 240;
 
-  projeterPersp(&t3D->C, p, camera);
-  t2D->p3[0] = p[0]*multiplicateurX;
-  t2D->p3[1] = p[1]*multiplicateurY;
+  projeterOrtho(&t3D->C, p, camera);
+  t2D->p3[0] = p[0]*multiplicateurX + 320;
+  t2D->p3[1] = p[1]*multiplicateurY + 240;
 
 }

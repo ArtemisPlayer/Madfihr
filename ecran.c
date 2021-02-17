@@ -71,19 +71,6 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
   SDL_RenderPresent(renderer);
 }
 
-void testDessin(SDL_Renderer* renderer){
-  triangle2D test;
-  test.p1[0] = 31.41;
-  test.p1[1] = 9.27;
-
-  test.p2[0] = 23.00;
-  test.p2[1] = 9.27;
-
-  test.p3[0] = 31.41;
-  test.p3[1] = 0.0;
-
-  dessinerTriangle(renderer, &test);
-}
 
 void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int tailleMonde){
   
@@ -91,19 +78,8 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
 
   for (int k = 0; k < tailleMonde; k++){
     projetterT3D(&temp, &monde[k], camera);
-    printf("%f", temp.p1[0]);
-    printf(" %f\n", temp.p1[1]);
-    printf("%f", temp.p2[0]);
-    printf(" %f\n", temp.p2[1]);
-    printf("%f", temp.p3[0]);
-    printf(" %f\n", temp.p3[1]);
     dessinerTriangle(renderer, &temp);
   }
-}
-
-void update()
-{
-  //SDL_SetRenderDrawColor(renderer, white.r, white.g, white.b, white.a);
 }
 
 void wait(){
@@ -117,4 +93,10 @@ void wait(){
         continuer = 0;
     }
   }
+}
+
+void clearEcran(SDL_Renderer *renderer){
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_RenderClear(renderer);
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }

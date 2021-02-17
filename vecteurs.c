@@ -54,6 +54,9 @@ void multiplicationScalaire(vect* A, double scalaire);
 double scalaire(vect* A, vect* B);
 void pVectoriel(vect* A, vect* B, vect* C);
 int isAngle2DObtu(double A[2], double B[2], double C[2]);
+void printVect(vect *vect);
+double Sign(Point* v1, Point* v2, Point* v3);
+int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3);
 
 double scalaire(vect* A, vect* B){
   //produit scalaire de deux vecteurs

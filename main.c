@@ -47,9 +47,57 @@ int main(){
   int tailleMonde = 1;
 
   //RUN
-  testDessin(renderer);
-  //renderMonde(renderer, &camera, monde, tailleMonde);
-  wait();
+  int continuer = 1;
+  vect delta; //utile pour les mvts
+  SDL_Event event;
+  while (continuer){
+    clearEcran(renderer);
+    renderMonde(renderer, &camera, monde, tailleMonde);
+    
+    SDL_WaitEvent(&event);
+    switch(event.type)
+    {
+      case SDL_QUIT:
+        continuer = 0;
+
+      case SDL_KEYDOWN:
+        switch (event.key.keysym.sym){
+          case SDLK_LSHIFT:
+            camera.position.y += 0.5;
+            break;
+          case SDLK_LCTRL:
+            camera.position.y -= 0.5;
+            break;
+          case SDLK_z:
+            delta = camera.direction;
+            multiplicationScalaire(&delta, 0.3);
+            add(&camera.position, &delta , &camera.position);
+            break;
+          case SDLK_s:
+            delta = camera.direction;
+            multiplicationScalaire(&delta, -0.3);
+            add(&camera.position, &delta , &camera.position);
+            break;
+          case SDLK_q:
+            delta = camera.u;
+            multiplicationScalaire(&delta, -0.3);
+            add(&camera.position, &delta , &camera.position);
+            break;
+          case SDLK_d:
+            delta = camera.u;
+            multiplicationScalaire(&delta, 0.3);
+            add(&camera.position, &delta , &camera.position);
+            break;
+          case SDLK_a:
+            //rotate left
+            ;
+          case SDLK_e:
+            //rotate right
+            ;
+        }
+        actualiserUV(&camera);
+    }
+  }
 
   quitEcran();
   return 0;
