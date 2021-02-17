@@ -1,4 +1,4 @@
-#MADFIHR - A 3D engine
+# MADFIHR - A 3D engine
 ## Concept
 The objective is tu visualize simple 3D forms (made in triangles) with a full hand-written 3D engine (exept for the SDL library used to create the window).
 ## What has been done so far ?
