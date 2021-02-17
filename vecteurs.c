@@ -106,6 +106,12 @@ int isAngle2DObtu(double A[2], double B[2], double C[2]){
 
 }
 
+void printVect(vect *vect){
+  printf("x=%f  ", vect->x);
+  printf("y=%f  ", vect->y);
+  printf("z=%f\n", vect->z);
+}
+
 //VECTEURS 2D
 
 double Sign(Point* v1, Point* v2, Point* v3){  

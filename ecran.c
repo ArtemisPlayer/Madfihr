@@ -62,11 +62,30 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
     for (int y = minY; y <= maxY; y++){
       p.x = (double) x;
       p.y = (double) y;
+      
       if (IsPointInTri(&p, &v1, &v2, &v3)){
+        printf("called");
         SDL_RenderDrawPoint(renderer, x, y);
       }
+      //printf("%f", p.x);
+      //printf("%f", p.y);
     }
   }
+  SDL_RenderPresent(renderer);
+}
+
+void testDessin(SDL_Renderer* renderer){
+  triangle2D test;
+  test.p1[0] = 31.41;
+  test.p1[1] = 9.27;
+
+  test.p2[0] = 23.00;
+  test.p2[1] = 9.27;
+
+  test.p3[0] = 31.41;
+  test.p3[1] = 0.0;
+
+  dessinerTriangle(renderer, &test);
 }
 
 void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int tailleMonde){
@@ -77,10 +96,12 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
     projetterT3D(&temp, &monde[k], camera);
     printf("%f", temp.p1[0]);
     printf(" %f\n", temp.p1[1]);
-
+    printf("%f", temp.p2[0]);
+    printf(" %f\n", temp.p2[1]);
+    printf("%f", temp.p3[0]);
+    printf(" %f\n", temp.p3[1]);
     dessinerTriangle(renderer, &temp);
   }
-  SDL_RenderPresent(renderer);
 }
 
 void update()

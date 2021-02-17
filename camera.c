@@ -72,9 +72,6 @@ void projeterPersp(vect* A, double p[], camera* camera){
   if (x == (double) 0){
     p[1] = 1.57;
   } else {
-    printf("x = %f  ", x);
-    printf("atan de %f ", y/x);
-    printf("= %f\n", atan(y/x));
     p[1] = atan(y/x);
   }
 }
@@ -86,8 +83,6 @@ void projetterT3D(triangle2D* t2D, triangle3D* t3D, camera* camera){
   double p[2];
 
   projeterPersp(&t3D->A, p, camera);
-  printf("%f ", p[0]);
-  printf("%f\n", p[1]);
   t2D->p1[0] = p[0]*multiplicateurX;
   t2D->p1[1] = p[1]*multiplicateurY;
 
