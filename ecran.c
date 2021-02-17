@@ -58,6 +58,8 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
   v3.x = t2D->p3[0];
   v3.y = t2D->p3[1];
 
+  SDL_SetRenderDrawColor(renderer, t2D->color.r, t2D->color.g, t2D->color.b, 255);
+
   for (int x = minX; x <= maxX; x++){
     for (int y = minY; y <= maxY; y++){
       p.x = (double) x;
@@ -73,7 +75,7 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
 
 
 void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int tailleMonde){
-  
+  //il va d'abord falloir trier pour afficher le plus proche en dernier...  
   triangle2D temp;
 
   for (int k = 0; k < tailleMonde; k++){

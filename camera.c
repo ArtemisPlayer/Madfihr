@@ -95,4 +95,5 @@ void projetterT3D(triangle2D* t2D, triangle3D* t3D, camera* camera){
   t2D->p3[0] = p[0]*multiplicateurX + 320;
   t2D->p3[1] = p[1]*multiplicateurY + 240;
 
+  t2D->color = t3D->color;
 }
