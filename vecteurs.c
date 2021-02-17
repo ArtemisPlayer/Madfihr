@@ -115,6 +115,33 @@ void printVect(vect *vect){
   printf("z=%f\n", vect->z);
 }
 
+void rotate(vect* A, vect* axe, double angle){
+  //tourne le vecteur 3D A autour de axe
+  //axe est de norme 1
+  vect C; //vect pour cos
+  vect B; //vect pour sin
+  vect new;
+
+  C = *axe;
+  multiplicationScalaire(&C, -scalaire(A, axe));
+  add(A, &C, &C);
+  multiplicationScalaire(&C, 1/norme(&C));
+
+  pVectoriel(axe, A, &B);
+  multiplicationScalaire(&B, 1/norme(&B));
+  //on a une bonne base (lol)
+  new = *axe;
+
+  multiplicationScalaire(&new, scalaire(axe, A));
+  multiplicationScalaire(&B, sin(angle)*scalaire(A, &C));
+  multiplicationScalaire(&C, cos(angle)*scalaire(A, &C));
+
+  add(&new, &C, &new);
+  add(&new, &B, &new);
+
+  *A = new;
+}
+
 //VECTEURS 2D
 
 double Sign(Point* v1, Point* v2, Point* v3){  

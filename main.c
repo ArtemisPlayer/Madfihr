@@ -53,7 +53,7 @@ int main(){
   while (continuer){
     clearEcran(renderer);
     renderMonde(renderer, &camera, monde, tailleMonde);
-    
+
     SDL_WaitEvent(&event);
     switch(event.type)
     {
@@ -90,10 +90,12 @@ int main(){
             break;
           case SDLK_a:
             //rotate left
-            ;
+            rotate(&camera.direction, &camera.v, 0.1);
+            break;
           case SDLK_e:
             //rotate right
-            ;
+            rotate(&camera.direction, &camera.v, -0.1);
+            break;
         }
         actualiserUV(&camera);
     }
