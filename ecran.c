@@ -64,11 +64,8 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
       p.y = (double) y;
       
       if (IsPointInTri(&p, &v1, &v2, &v3)){
-        printf("called");
         SDL_RenderDrawPoint(renderer, x, y);
       }
-      //printf("%f", p.x);
-      //printf("%f", p.y);
     }
   }
   SDL_RenderPresent(renderer);

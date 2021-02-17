@@ -120,7 +120,9 @@ double Sign(Point* v1, Point* v2, Point* v3){
 
 int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3){
   int b1, b2, b3;
-  b1, b2, b3 = 0;
+  b1 = 0;
+  b2 = 0;
+  b3 = 0;
   if (Sign(p, v1, v2) < 0.0) b1 = 1;    
   if (Sign(p, v2, v3) < 0.0) b2 = 1;    
   if (Sign(p, v3, v1) < 0.0) b3 = 1;
