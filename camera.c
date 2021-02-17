@@ -46,6 +46,7 @@ void projeterOrtho(vect* A, double p[], camera* camera){
 }
 
 void projeterPersp(vect* A, double p[], camera* camera){
+  //NE FONCTIONNE PAS
   //calcul de teta et phi
 
   vect Aprime; //A dans le repere de la camera
