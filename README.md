@@ -4,8 +4,6 @@ The objective is tu visualize simple 3D forms (made in triangles) with a full ha
 ## What has been done so far ?
 The program is able to show multiples 3D triangles in Orthographic or Perspective (default: perspective) projection and moving around in a 3D space.
 ## What's next ?
-Code will be restructured (Indeed, not using .h files is not a good idea).
-The triangles will be able to be displayed one above others.
 A real demo will run at startup.
 ## Damn ! I want to try out this very promising 3D engine !
 You can ! First you should install the SDL library, then clone this repo and compile it.

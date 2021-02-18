@@ -1,6 +1,6 @@
 //##############################################################
 //#                   M A D F I H R                            #
-//#    A 3D engine written in c by ArtemisPlayer. v0.9         #
+//#    A 3D engine written in c by ArtemisPlayer. v1.0         #
 //##############################################################
 
 
@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <SDL2/SDL.h>
-#include <math.h> 
+#include <math.h>  
 
 //--------------------------------------------VECTEURS
 
@@ -349,6 +349,7 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
   int maxY;
   int minX;
   int minY;
+
   maxX = t2D->p1[0];
   maxY = t2D->p1[1];
   minX = t2D->p1[0];
@@ -400,13 +401,11 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
       p.x = (double) x;
       p.y = (double) y;
       
-      
       if (IsPointInTri(&p, &v1, &v2, &v3)){
         SDL_RenderDrawPoint(renderer, x, y);
       }
     }
   }
-  SDL_RenderPresent(renderer);
 }
 
 
@@ -419,6 +418,7 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
   vect gamma; //vecteur intermédiaire de calcul
   int tempIM; //variable pous stocker l'index min temporairemet
   double distanceMax;
+  distanceMax = (double) 10000;
 
   double index[tailleMonde];
   for (int i = 0; i < tailleMonde; i++){
@@ -431,24 +431,21 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
     add(&barycentre, &gamma, &barycentre);//barycentre dans le repere camera
     index[i] = norme(&barycentre);
   }
-  printf("index 0 : %f\n", index[0]);
-
-  distanceMax = max(index, tailleMonde);
 
   for (int i = 0; i < tailleMonde; i++){//tri par insertion
     tempIM = indexMin(index, tailleMonde);
     sorted[i] = monde[tempIM];
-    index[tempIM] = distanceMax*2; //pour ne pas le reprendre la fois suivante
+    index[tempIM] = distanceMax; //pour ne pas le reprendre la fois suivante
   }
 
   triangle2D temp;
-
   for (int k = 0; k < tailleMonde; k++){
     
     projetterT3DPersp(&temp, &sorted[tailleMonde - k - 1], camera);//on affiche les plus loin en premier
     dessinerTriangle(renderer, &temp);
 
   }
+  SDL_RenderPresent(renderer);
 }
 
 void wait(){
@@ -540,7 +537,6 @@ int main(){
   while (continuer){
     clearEcran(renderer);
     renderMonde(renderer, &camera, monde, tailleMonde);
-
     SDL_WaitEvent(&event);
     switch(event.type)
     {
