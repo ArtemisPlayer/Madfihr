@@ -519,6 +519,9 @@ void processEvent(SDL_Event event, camera *camera, int *continuer, int *isDemo){
           case SDLK_SPACE:
             if (*isDemo == 0){
               *isDemo = 1;
+              camera->position.x = -5;
+              camera->position.y = 0.5;
+              camera->position.z = 0;
             } else {
               *isDemo = 0;
             }
@@ -623,7 +626,7 @@ int main(){
       multiplicationScalaire(&alpha, -0.1);
       add(&camera.position, &alpha , &camera.position);
       rotate(&camera.direction, &camera.v, -0.0199973);
-      SDL_Delay(20);
+      SDL_Delay(10);
       actualiserUV(&camera);
     }
   }
