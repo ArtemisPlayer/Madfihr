@@ -22,32 +22,48 @@ int main(){
 
   SDL_Window *ecran;
   SDL_Renderer *renderer;
-  SDL_Color white = {255, 255, 255, 255};
+  SDL_Color green = {0, 0, 255, 255};
   SDL_Color red = {255, 0, 0, 255};
 
   ecran = SDL_CreateWindow("Madfihr", 20, 20, 640, 480, SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(ecran, -1, SDL_RENDERER_ACCELERATED);
-  SDL_SetRenderDrawColor(renderer, white.r, white.g, white.b, white.a);
   //Création du monde
   triangle3D T1;
 
-  T1.A.x = 4;
+  T1.A.x = 5;
   T1.A.y = 1;
   T1.A.z = 0;
 
-  T1.B.x = 4;
+  T1.B.x = 5;
   T1.B.y = 1;
   T1.B.z = 1;
 
-  T1.C.x = 4;
+  T1.C.x = 5;
   T1.C.y = 0;
   T1.C.z = 0;
 
   T1.color = red;
 
-  triangle3D monde[1];
+  triangle3D T2;
+
+  T2.A.x = 5;
+  T2.A.y = 1;
+  T2.A.z = 0;
+
+  T2.B.x = 6;
+  T2.B.y = 1;
+  T2.B.z = 0;
+
+  T2.C.x = 5;
+  T2.C.y = 0;
+  T2.C.z = 0;
+
+  T2.color = green;
+
+  triangle3D monde[2];
   monde[0] = T1;
-  int tailleMonde = 1;
+  monde[1] = T2;
+  int tailleMonde = 2;
 
   //RUN
   int continuer = 1;

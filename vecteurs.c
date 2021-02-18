@@ -59,6 +59,9 @@ int isAngle2DObtu(double A[2], double B[2], double C[2]);
 void printVect(vect *vect);
 double Sign(Point* v1, Point* v2, Point* v3);
 int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3);
+int indexMin(double tableau[], int tailleTableau);
+double max(double tableau[], int tailleTableau);
+void printTriangle(triangle3D *triangle);
 
 double scalaire(vect* A, vect* B){
   //produit scalaire de deux vecteurs
@@ -166,3 +169,39 @@ int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3){
     return 0;
   }
 }    
+
+void printTriangle(triangle3D *triangle){
+  printf("------------\n");
+  printVect(&triangle->A);
+  printVect(&triangle->B);
+  printVect(&triangle->C);
+}
+
+//AUTRES FONCTIONS MATH
+
+int indexMin(double tableau[], int tailleTableau){
+  //tableau a valeurs positives
+  double min;
+  int minIndex;
+  min = (double)10000;
+  minIndex = 0;
+
+  for (int j = 0; j<tailleTableau; j++){
+    if (tableau[j] < min){
+      min = tableau[j];
+      minIndex = j;
+    }
+  }
+  return minIndex;
+}
+
+double max(double tableau[], int tailleTableau){
+  double max;
+  max = 0;
+  for (int k; k<tailleTableau; k++){
+    if (tableau[k] > max){
+      max = tableau[k];
+    }
+  }
+  return max;
+}

@@ -59,11 +59,12 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
   v3.y = t2D->p3[1];
 
   SDL_SetRenderDrawColor(renderer, t2D->color.r, t2D->color.g, t2D->color.b, 255);
-
+  
   for (int x = minX; x <= maxX; x++){
     for (int y = minY; y <= maxY; y++){
       p.x = (double) x;
       p.y = (double) y;
+      
       
       if (IsPointInTri(&p, &v1, &v2, &v3)){
         SDL_RenderDrawPoint(renderer, x, y);
@@ -76,11 +77,42 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
 
 void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int tailleMonde){
   //il va d'abord falloir trier pour afficher le plus proche en dernier...  
+
+  triangle3D sorted[tailleMonde];
+
+  vect barycentre;
+  vect gamma; //vecteur intermédiaire de calcul
+  int tempIM; //variable pous stocker l'index min temporairemet
+  double distanceMax;
+
+  double index[tailleMonde];
+  for (int i = 0; i < tailleMonde; i++){
+    //calcul du barycentre du triangle:
+    barycentre.x = (monde[i].A.x + monde[i].B.x + monde[i].C.x)/3;
+    barycentre.y = (monde[i].A.y + monde[i].B.y + monde[i].C.y)/3;
+    barycentre.z = (monde[i].A.z + monde[i].B.z + monde[i].C.z)/3;
+    gamma = camera->position;
+    multiplicationScalaire(&gamma, -1);
+    add(&barycentre, &gamma, &barycentre);//barycentre dans le repere camera
+    index[i] = norme(&barycentre);
+  }
+  printf("index 0 : %f\n", index[0]);
+
+  distanceMax = max(index, tailleMonde);
+
+  for (int i = 0; i < tailleMonde; i++){//tri par insertion
+    tempIM = indexMin(index, tailleMonde);
+    sorted[i] = monde[tempIM];
+    index[tempIM] = distanceMax*2; //pour ne pas le reprendre la fois suivante
+  }
+
   triangle2D temp;
 
   for (int k = 0; k < tailleMonde; k++){
-    projetterT3DPersp(&temp, &monde[k], camera);
+    
+    projetterT3DPersp(&temp, &sorted[tailleMonde - k - 1], camera);//on affiche les plus loin en premier
     dessinerTriangle(renderer, &temp);
+
   }
 }
 
