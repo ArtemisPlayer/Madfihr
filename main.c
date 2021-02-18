@@ -1,6 +1,6 @@
 //##############################################################
 //#                   M A D F I H R                            #
-//#    A 3D engine written in c by ArtemisPlayer. v1.0         #
+//#    A 3D engine written in c by ArtemisPlayer. v1.1         #
 //##############################################################
 
 
@@ -626,7 +626,7 @@ int main(){
       multiplicationScalaire(&alpha, -0.1);
       add(&camera.position, &alpha , &camera.position);
       rotate(&camera.direction, &camera.v, -0.0199973);
-      SDL_Delay(10);
+      SDL_Delay(5);
       actualiserUV(&camera);
     }
   }
