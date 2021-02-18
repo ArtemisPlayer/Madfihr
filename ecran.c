@@ -79,7 +79,7 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
   triangle2D temp;
 
   for (int k = 0; k < tailleMonde; k++){
-    projetterT3D(&temp, &monde[k], camera);
+    projetterT3DPersp(&temp, &monde[k], camera);
     dessinerTriangle(renderer, &temp);
   }
 }

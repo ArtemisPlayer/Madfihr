@@ -31,15 +31,15 @@ int main(){
   //Création du monde
   triangle3D T1;
 
-  T1.A.x = 2;
+  T1.A.x = 4;
   T1.A.y = 1;
   T1.A.z = 0;
 
-  T1.B.x = 2;
+  T1.B.x = 4;
   T1.B.y = 1;
   T1.B.z = 1;
 
-  T1.C.x = 2;
+  T1.C.x = 4;
   T1.C.y = 0;
   T1.C.z = 0;
 
