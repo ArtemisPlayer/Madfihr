@@ -9,3 +9,5 @@ You can ! First you should install the SDL library, then clone this repo and com
 You also can download *a.out* which is an executable compiled on Ubuntu 20.04, but I haven't tried so far...
 ## About the code
 I'm french so most of the comments are in french. The main.c file contains the whole code.
+
+4C50D74F92127CD8F941AE4EF484FF91
