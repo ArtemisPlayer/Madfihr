@@ -1,6 +1,6 @@
 //##############################################################
 //#                   M A D F I H R                            #
-//#    A 3D engine written in c by ArtemisPlayer. v1.1         #
+//#    A 3D engine written in c by ArtemisPlayer. v1.2         #
 //##############################################################
 
 
@@ -58,20 +58,7 @@ struct Point{//vecteur 2D
   double y;
 };
 
-//PROTOTYPES
-void add(vect* A, vect* B, vect* C);
-void oppose(vect* A);
-double norme(vect* vecteur);
-void multiplicationScalaire(vect* A, double scalaire);
-double scalaire(vect* A, vect* B);
-void pVectoriel(vect* A, vect* B, vect* C);
-int isAngle2DObtu(double A[2], double B[2], double C[2]);
-void printVect(vect *vect);
-double Sign(Point* v1, Point* v2, Point* v3);
-int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3);
-int indexMin(double tableau[], int tailleTableau);
-double max(double tableau[], int tailleTableau);
-void printTriangle(triangle3D *triangle);
+//FONCTIONS
 
 double scalaire(vect* A, vect* B){
   //produit scalaire de deux vecteurs
@@ -112,19 +99,7 @@ void pVectoriel(vect* A, vect* B, vect* C){
   C->z = A->x * B->y - A->y * B->x;
 }
 
-int isAngle2DObtu(double A[2], double B[2], double C[2]){
-  //angle ABC sens trigo
-  double pScalaire;
-  pScalaire = (C[0] - B[0])*(A[0] - B[0]) + (A[1] - B[1])*(C[1] - B[1]);
-  if (pScalaire >= 0){
-    return 1;//true
-  } else {
-    return 0;//false
-  }
-
-}
-
-void printVect(vect *vect){
+void printVect(vect *vect){//Pour debug
   printf("x=%f  ", vect->x);
   printf("y=%f  ", vect->y);
   printf("z=%f\n", vect->z);
@@ -180,7 +155,7 @@ int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3){
   }
 }    
 
-void printTriangle(triangle3D *triangle){
+void printTriangle(triangle3D *triangle){//pour debug
   printf("------------\n");
   printVect(&triangle->A);
   printVect(&triangle->B);
@@ -215,15 +190,9 @@ double max(double tableau[], int tailleTableau){
   }
   return max;
 }
-//--------------------------------------------
 
 
 //--------------------------------------------CAMERA
-//PROTOTYPES
-void projeter(vect* A, double p[2], camera* camera);
-void actualiserUV(camera* camera);
-void projeterPersp(vect* A, double p[], camera* camera);
-void afficherTriangle2D(triangle2D* t2D, int COLS, int LINES, double MAXX, double MAXY);
 
 //FONCTIONS
 void actualiserUV(camera* camera){
@@ -246,20 +215,6 @@ void actualiserUV(camera* camera){
   //on termine la base avec u
   pVectoriel(&camera->direction, &camera->v, &camera->u);
 
-}
-
-void projeterOrtho(vect* A, double p[], camera* camera){
-  //projette tout vecteur sur l'écran de façon orthographique
-
-  vect Aprime; //A dans le repere de la camera
-  vect minusPos;
-
-  minusPos = camera->position;
-  oppose(&minusPos);
-  add(A, &minusPos, &Aprime);
-
-  p[0] = scalaire(&Aprime, &camera->u);
-  p[1] = scalaire(&Aprime, &camera->v);
 }
 
 void projeterPersp(vect* A, double p[], camera* camera){
@@ -293,27 +248,6 @@ void projeterPersp(vect* A, double p[], camera* camera){
 
 }
 
-void projetterT3DOrtho(triangle2D* t2D, triangle3D* t3D, camera* camera){
-  //affiche en triangle 2D un triangle 3D vu par camera
-  double multiplicateurX = 100;
-  double multiplicateurY = -100;
-  double p[2];
-
-  projeterOrtho(&t3D->A, p, camera);
-  t2D->p1[0] = p[0]*multiplicateurX + 320;
-  t2D->p1[1] = p[1]*multiplicateurY + 240;
-
-  projeterOrtho(&t3D->B, p, camera);
-  t2D->p2[0] = p[0]*multiplicateurX + 320;
-  t2D->p2[1] = p[1]*multiplicateurY + 240;
-
-  projeterOrtho(&t3D->C, p, camera);
-  t2D->p3[0] = p[0]*multiplicateurX + 320;
-  t2D->p3[1] = p[1]*multiplicateurY + 240;
-
-  t2D->color = t3D->color;
-}
-
 void projetterT3DPersp(triangle2D* t2D, triangle3D* t3D, camera* camera){
   //affiche en triangle 2D un triangle 3D vu par camera
   double multiplicateurX = 1000;
@@ -334,7 +268,6 @@ void projetterT3DPersp(triangle2D* t2D, triangle3D* t3D, camera* camera){
 
   t2D->color = t3D->color;
 }
-//--------------------------------------------
 
 
 //--------------------------------------------ECRAN
@@ -455,8 +388,6 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
   }
 
   triangle2D temp;
-  //struct timeval tv1;
-  //struct timeval tv2;
 
   for (int k = 0; k < tailleMonde; k++){
 
@@ -466,18 +397,6 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
   SDL_RenderPresent(renderer);
 }
 
-void wait(){
-  int continuer = 1;
-  SDL_Event event;
-  while (continuer){
-    SDL_WaitEvent(&event);
-    switch(event.type)
-    {
-      case SDL_QUIT:
-        continuer = 0;
-    }
-  }
-}
 
 void clearEcran(SDL_Renderer *renderer){
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -485,13 +404,11 @@ void clearEcran(SDL_Renderer *renderer){
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-//--------------------------------------------
-
 
 //--------------------------------------------MAIN
 
-
-void processEvent(SDL_Event event, camera *camera, int *continuer, int *isDemo){
+void processEvent(SDL_Event event, camera *camera, int *continuer){
+  //Gère les évènements clavier
   vect delta; //utile pour les mvts
   switch(event.type)
     {
@@ -534,23 +451,13 @@ void processEvent(SDL_Event event, camera *camera, int *continuer, int *isDemo){
             //rotate right
             rotate(&camera->direction, &camera->v, -0.1);
             break;
-          case SDLK_SPACE:
-            if (*isDemo == 0){
-              *isDemo = 1;
-              camera->position.x = -5;
-              camera->position.y = 0.5;
-              camera->position.z = 0;
-            } else {
-              *isDemo = 0;
-            }
-            break;
         }
         actualiserUV(camera);
     }
 }
 
 void loadWorld(triangle3D monde[]){
-
+  //Charge le monde depuis WORLD
   FILE* in_file = fopen("WORLD", "r"); 
 
   char line[100];
@@ -604,27 +511,13 @@ int main(){
 
   //RUN
   int continuer = 1;
-  int isDemo = 0;
-  vect alpha; //pour la demo
   SDL_Event event;
+
   while (continuer){
     clearEcran(renderer);
     renderMonde(renderer, &camera, monde, tailleMonde);
-    if (isDemo == 1){
-      SDL_PollEvent(&event);
-    } else {
-      SDL_WaitEvent(&event);
-    }
-    processEvent(event, &camera, &continuer, &isDemo);
-
-    if (isDemo == 1){
-      alpha = camera.u;
-      multiplicationScalaire(&alpha, -0.1);
-      add(&camera.position, &alpha , &camera.position);
-      rotate(&camera.direction, &camera.v, -0.0199973);
-      SDL_Delay(5);
-      actualiserUV(&camera);
-    }
+    SDL_WaitEvent(&event);
+    processEvent(event, &camera, &continuer);
   }
 
   quitEcran();
