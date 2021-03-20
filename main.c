@@ -10,6 +10,8 @@
 #include <SDL2/SDL.h>
 #include <math.h>  
 
+#include <sys/time.h>
+
 //--------------------------------------------VECTEURS
 
 //STRUCTURES
@@ -379,6 +381,20 @@ void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
     minY = t2D->p3[1];
   }
 
+  //on check pas en dehors de l'écran:
+  if (maxX > 640){
+    maxX = 640;
+  } 
+  if (minX < 0){
+    minX = 0;
+  }
+  if (maxY > 480){
+    maxY = 480;
+  } 
+  if (minY < 0){
+    minY = 0;
+  }
+
   //on sait que les pixels à examiner seront entre minX - maxX, id Y
   Point p;
   Point v1;
@@ -439,11 +455,13 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
   }
 
   triangle2D temp;
-  for (int k = 0; k < tailleMonde; k++){
-    
-    projetterT3DPersp(&temp, &sorted[tailleMonde - k - 1], camera);//on affiche les plus loin en premier
-    dessinerTriangle(renderer, &temp);
+  //struct timeval tv1;
+  //struct timeval tv2;
 
+  for (int k = 0; k < tailleMonde; k++){
+
+    projetterT3DPersp(&temp, &sorted[tailleMonde - k - 1], camera);//on affiche les plus loin en premier
+    dessinerTriangle(renderer, &temp);// LONG quand grand triangle
   }
   SDL_RenderPresent(renderer);
 }
@@ -530,6 +548,7 @@ void processEvent(SDL_Event event, camera *camera, int *continuer, int *isDemo){
         actualiserUV(camera);
     }
 }
+
 
 int main(){
 
