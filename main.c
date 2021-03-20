@@ -48,8 +48,6 @@ struct camera
   vect direction;
   vect u;
   vect v;
-  double tailleX;
-  double tailleY;
 };
 
 typedef struct Point Point;
@@ -378,7 +376,14 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
     gamma = camera->position;
     multiplicationScalaire(&gamma, -1);
     add(&barycentre, &gamma, &barycentre);//barycentre dans le repere camera
-    index[i] = norme(&barycentre);
+
+    if (scalaire(&camera->direction, &barycentre) <0){
+      index[i] = distanceMax;
+    } else{
+      index[i] = norme(&barycentre);
+    }
+
+    
   }
 
   for (int i = 0; i < tailleMonde; i++){//tri par insertion
@@ -425,17 +430,17 @@ void processEvent(SDL_Event event, camera *camera, int *continuer){
             break;
           case SDLK_z:
             delta = camera->direction;
-            multiplicationScalaire(&delta, 0.3);
+            multiplicationScalaire(&delta, 1);
             add(&camera->position, &delta , &camera->position);
             break;
           case SDLK_s:
             delta = camera->direction;
-            multiplicationScalaire(&delta, -0.3);
+            multiplicationScalaire(&delta, -1);
             add(&camera->position, &delta , &camera->position);
             break;
           case SDLK_q:
             delta = camera->u;
-            multiplicationScalaire(&delta, -0.3);
+            multiplicationScalaire(&delta, -1);
             add(&camera->position, &delta , &camera->position);
             break;
           case SDLK_d:
@@ -445,11 +450,11 @@ void processEvent(SDL_Event event, camera *camera, int *continuer){
             break;
           case SDLK_a:
             //rotate left
-            rotate(&camera->direction, &camera->v, 0.1);
+            rotate(&camera->direction, &camera->v, 0.05);
             break;
           case SDLK_e:
             //rotate right
-            rotate(&camera->direction, &camera->v, -0.1);
+            rotate(&camera->direction, &camera->v, -0.05);
             break;
         }
         actualiserUV(camera);
@@ -467,18 +472,23 @@ void loadWorld(triangle3D monde[]){
   SDL_Color green = {0, 255, 0, 255};
   SDL_Color red = {255, 0, 0, 255};
   SDL_Color blue = {0, 0, 255, 255};
+  SDL_Color grey = {70, 70, 70, 255};
 
   while (fgets(line, 100, in_file) != NULL) { 
+    if (line[0] == '\'' || line[0] == '\n'){
+      continue;
+    }
     sscanf(line, "%lf %lf %lf - %lf %lf %lf - %lf %lf %lf - C%i", &monde[i].A.x, &monde[i].A.y, &monde[i].A.z,
         &monde[i].B.x, &monde[i].B.y, &monde[i].B.z,
         &monde[i].C.x, &monde[i].C.y, &monde[i].C.z, &color);
-    printf("%i\n", color);
-    if (color == 0){ // 0 red 1 green 2 blue
+    if (color == 0){ // 0 red 1 green 2 blue 3 grey
       monde[i].color = red;
     } else if (color == 1) {
       monde[i].color = green;
     } else if (color == 2) {
       monde[i].color = blue;
+    } else if (color == 3) {
+      monde[i].color = grey;
     }
     i++;
   } 
@@ -489,9 +499,9 @@ int main(){
 
   //INITIALISATION
   camera camera;
-  camera.position.x = -5;
-  camera.position.y = 0.5;
-  camera.position.z = 0;
+  camera.position.x = -10;
+  camera.position.y = 7;
+  camera.position.z = 10;
   camera.direction.x = 1;
   camera.direction.y = 0;
   camera.direction.z = 0;
@@ -505,8 +515,8 @@ int main(){
 
   //Création du monde
   
-  triangle3D monde[3];
-  int tailleMonde = 3;
+  triangle3D monde[30];
+  int tailleMonde = 30;
   loadWorld(monde);
 
   //RUN
@@ -516,7 +526,7 @@ int main(){
   while (continuer){
     clearEcran(renderer);
     renderMonde(renderer, &camera, monde, tailleMonde);
-    SDL_WaitEvent(&event);
+    SDL_PollEvent(&event);
     processEvent(event, &camera, &continuer);
   }
 
