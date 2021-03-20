@@ -549,6 +549,34 @@ void processEvent(SDL_Event event, camera *camera, int *continuer, int *isDemo){
     }
 }
 
+void loadWorld(triangle3D monde[]){
+
+  FILE* in_file = fopen("WORLD", "r"); 
+
+  char line[100];
+  int i = 0; 
+  int color = 0;
+
+  SDL_Color green = {0, 255, 0, 255};
+  SDL_Color red = {255, 0, 0, 255};
+  SDL_Color blue = {0, 0, 255, 255};
+
+  while (fgets(line, 100, in_file) != NULL) { 
+    sscanf(line, "%lf %lf %lf - %lf %lf %lf - %lf %lf %lf - C%i", &monde[i].A.x, &monde[i].A.y, &monde[i].A.z,
+        &monde[i].B.x, &monde[i].B.y, &monde[i].B.z,
+        &monde[i].C.x, &monde[i].C.y, &monde[i].C.z, &color);
+    printf("%i\n", color);
+    if (color == 0){ // 0 red 1 green 2 blue
+      monde[i].color = red;
+    } else if (color == 1) {
+      monde[i].color = green;
+    } else if (color == 2) {
+      monde[i].color = blue;
+    }
+    i++;
+  } 
+  
+}
 
 int main(){
 
@@ -564,66 +592,15 @@ int main(){
 
   SDL_Window *ecran;
   SDL_Renderer *renderer;
-  SDL_Color green = {0, 255, 0, 255};
-  SDL_Color red = {255, 0, 0, 255};
-  SDL_Color blue = {0, 0, 255, 255};
 
   ecran = SDL_CreateWindow("Madfihr", 20, 20, 640, 480, SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(ecran, -1, SDL_RENDERER_ACCELERATED);
+
   //Création du monde
-  triangle3D T1;
-
-  T1.A.x = 0;
-  T1.A.y = 1;
-  T1.A.z = 0;
-
-  T1.B.x = 0;
-  T1.B.y = 1;
-  T1.B.z = 1;
-
-  T1.C.x = 0;
-  T1.C.y = 0;
-  T1.C.z = 0;
-
-  T1.color = red;
-
-  triangle3D T2;
-
-  T2.A.x = 0;
-  T2.A.y = 1;
-  T2.A.z = 0;
-
-  T2.B.x = 1;
-  T2.B.y = 1;
-  T2.B.z = 0;
-
-  T2.C.x = 0;
-  T2.C.y = 0;
-  T2.C.z = 0;
-
-  T2.color = green;
-
-  triangle3D T3;
-
-  T3.A.x = 1;
-  T3.A.y = 1;
-  T3.A.z = 0;
-
-  T3.B.x = 0;
-  T3.B.y = 0;
-  T3.B.z = 0;
-
-  T3.C.x = 0;
-  T3.C.y = 1;
-  T3.C.z = 1;
-
-  T3.color = blue;
-
+  
   triangle3D monde[3];
-  monde[0] = T1;
-  monde[1] = T2;
-  monde[2] = T3;
   int tailleMonde = 3;
+  loadWorld(monde);
 
   //RUN
   int continuer = 1;
