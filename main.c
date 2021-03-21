@@ -56,6 +56,7 @@ struct Point{//vecteur 2D
   double y;
 };
 
+
 //FONCTIONS
 
 double scalaire(vect* A, vect* B){
@@ -129,29 +130,6 @@ void rotate(vect* A, vect* axe, double angle){
 
   *A = new;
 }
-
-//VECTEURS 2D
-
-double Sign(Point* v1, Point* v2, Point* v3){  
-  return (v1->x - v3->x) * (v2->y - v3->y) - (v2->x - v3->x) * (v1->y - v3->y);
-}
-
-int IsPointInTri(Point* p, Point* v1, Point* v2, Point* v3){
-  int b1, b2, b3;
-  b1 = 0;
-  b2 = 0;
-  b3 = 0;
-  if (Sign(p, v1, v2) < 0.0) b1 = 1;    
-  if (Sign(p, v2, v3) < 0.0) b2 = 1;    
-  if (Sign(p, v3, v1) < 0.0) b3 = 1;
-  int sum;
-  sum = b1+b2+b3;
-  if (sum == 0 || sum == 3){
-    return 1;
-  } else {
-    return 0;
-  }
-}    
 
 void printTriangle(triangle3D *triangle){//pour debug
   printf("------------\n");
@@ -441,6 +419,22 @@ void clearEcran(SDL_Renderer *renderer){
 void processEvent(SDL_Event event, camera *camera, int *continuer){
   //Gère les évènements clavier
   vect delta; //utile pour les mvts
+
+  vect origine;
+  double x;
+  x = ((double)event.motion.x-320)/300;
+  origine.x = cos(x);
+  origine.y = 0;
+  origine.z = sin(x); 
+
+  vect base;
+  base.x = 1;
+  base.y = 0;
+  base.z = 0;
+  rotate(&base, &camera->v, ((double)event.motion.x-320)/300);
+  
+  //on ne fait rien avec base et origine car ça bug sans raison
+
   switch(event.type)
     {
       case SDL_QUIT:
