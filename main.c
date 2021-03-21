@@ -223,14 +223,13 @@ int projeterPersp(vect* A, double p[], camera* camera){
   x = scalaire(&Aprime, &camera->direction);
   y = scalaire(&Aprime, &camera->v);
   z = scalaire(&Aprime, &camera->u);
-  
+
+  p[1] = -y/(x*tan(fov));
+  p[0] = z/(x*tan(fov));
+
   if (x <= (double) 0){
-    p[0] = 10;
-    p[1] = 10;//hors écran (écran va de -1 à 1 selon y )
     return -1;
-  } else {
-    p[1] = -y/(x*tan(fov));
-    p[0] = z/(x*tan(fov));
+  } else { 
     return 0;
   }
 
@@ -258,7 +257,7 @@ void projetterT3DPersp(triangle2D* t2D, triangle3D* t3D, camera* camera){
 
   t2D->color = t3D->color;
 
-  if (checksum<0){
+  if (checksum <0){
     t2D->display = 0;
   } else {
     t2D->display = 1;
@@ -450,10 +449,10 @@ void processEvent(SDL_Event event, camera *camera, int *continuer){
       case SDL_KEYDOWN:
         switch (event.key.keysym.sym){
           case SDLK_LSHIFT:
-            camera->position.y += 0.5;
+            camera->position.y += 0.01;
             break;
           case SDLK_LCTRL:
-            camera->position.y -= 0.5;
+            camera->position.y -= 0.01;
             break;
           case SDLK_z:
             delta = camera->direction;
@@ -520,29 +519,19 @@ int main(){
   monde = malloc(tailleMonde*sizeof(triangle3D));
 
   int i = 0; 
-  int color = 0;
-
-  SDL_Color green = {0, 255, 0, 255};
-  SDL_Color red = {255, 0, 0, 255};
-  SDL_Color blue = {0, 0, 255, 255};
-  SDL_Color grey = {70, 70, 70, 255};
+  
+  int r, g, b;
 
   while (fgets(line, 100, in_file) != NULL) { 
     if (line[0] == '\'' || line[0] == '\n'){
       continue;
     }
-    sscanf(line, "%lf %lf %lf - %lf %lf %lf - %lf %lf %lf - C%i", &monde[i].A.x, &monde[i].A.y, &monde[i].A.z,
+    sscanf(line, "%lf %lf %lf - %lf %lf %lf - %lf %lf %lf - r%i g%i b%i", &monde[i].A.x, &monde[i].A.y, &monde[i].A.z,
         &monde[i].B.x, &monde[i].B.y, &monde[i].B.z,
-        &monde[i].C.x, &monde[i].C.y, &monde[i].C.z, &color);
-    if (color == 0){ // 0 red 1 green 2 blue 3 grey
-      monde[i].color = red;
-    } else if (color == 1) {
-      monde[i].color = green;
-    } else if (color == 2) {
-      monde[i].color = blue;
-    } else if (color == 3) {
-      monde[i].color = grey;
-    }
+        &monde[i].C.x, &monde[i].C.y, &monde[i].C.z, 
+        &r, &g, &b);
+    SDL_Color thisColor = {r, g, b, 255};
+    monde[i].color = thisColor;
     i++;
   } 
 
