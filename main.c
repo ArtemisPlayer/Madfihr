@@ -9,7 +9,6 @@
 #include <string.h>
 #include <SDL2/SDL.h>
 #include <math.h>  
-
 #include <sys/time.h>
 
 //--------------------------------------------VECTEURS
@@ -39,6 +38,7 @@ struct triangle2D
   double p2[2];
   double p3[2];
   SDL_Color color;
+  int display;//Affiche t on le triangle ?
 };
 
 typedef struct camera camera;
@@ -215,7 +215,7 @@ void actualiserUV(camera* camera){
 
 }
 
-void projeterPersp(vect* A, double p[], camera* camera){
+int projeterPersp(vect* A, double p[], camera* camera){
 
   double fov; //demi-angle de vision
   fov = 0.80;
@@ -239,9 +239,11 @@ void projeterPersp(vect* A, double p[], camera* camera){
   if (x <= (double) 0){
     p[0] = 10;
     p[1] = 10;//hors écran (écran va de -1 à 1 selon y )
+    return -1;
   } else {
     p[1] = -y/(x*tan(fov));
     p[0] = z/(x*tan(fov));
+    return 0;
   }
 
 }
@@ -252,109 +254,142 @@ void projetterT3DPersp(triangle2D* t2D, triangle3D* t3D, camera* camera){
   double multiplicateurY = 1000;
   double p[2];
 
-  projeterPersp(&t3D->A, p, camera);
+  int checksum = 0;
+
+  checksum += projeterPersp(&t3D->A, p, camera);
   t2D->p1[0] = p[0]*multiplicateurX + 320;
   t2D->p1[1] = p[1]*multiplicateurY + 240;
 
-  projeterPersp(&t3D->B, p, camera);
+  checksum += projeterPersp(&t3D->B, p, camera);
   t2D->p2[0] = p[0]*multiplicateurX + 320;
   t2D->p2[1] = p[1]*multiplicateurY + 240;
 
-  projeterPersp(&t3D->C, p, camera);
+  checksum += projeterPersp(&t3D->C, p, camera);
   t2D->p3[0] = p[0]*multiplicateurX + 320;
   t2D->p3[1] = p[1]*multiplicateurY + 240;
 
   t2D->color = t3D->color;
+
+  if (checksum<0){
+    t2D->display = 0;
+  } else {
+    t2D->display = 1;
+  }
 }
 
 
 //--------------------------------------------ECRAN
 
+typedef struct Vertice Vertice;
+struct Vertice
+{ //structure vecteur 2D
+  float x;
+  float y;
+};
+
+void fillBottomFlatTriangle(Vertice v1, Vertice v2, Vertice v3, SDL_Renderer* renderer){
+  float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+  float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+
+  float curx1 = v1.x;
+  float curx2 = v1.x;
+
+  for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
+    SDL_RenderDrawLine(renderer, (int)curx1, scanlineY, (int)curx2, scanlineY);
+    curx1 += invslope1;
+    curx2 += invslope2;
+  }
+}
+
+void fillTopFlatTriangle(Vertice v1, Vertice v2, Vertice v3, SDL_Renderer* renderer){
+  float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
+  float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
+
+  float curx1 = v3.x;
+  float curx2 = v3.x;
+
+  for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--){
+    SDL_RenderDrawLine(renderer, (int)curx1, scanlineY, (int)curx2, scanlineY);
+    curx1 -= invslope1;
+    curx2 -= invslope2;
+  }
+}
+
+void drawTriangle(SDL_Renderer* renderer, triangle2D t2D){
+  //On crée les vertices en triant au passage
+  //Le code est fat mais c'est pour plus de vitesse
+  Vertice v1;
+  Vertice v2;
+  Vertice v3;
+
+  if (t2D.p1[1] < t2D.p2[1]){
+    if (t2D.p1[1] < t2D.p3[1]){
+      v1.x = t2D.p1[0];
+      v1.y = t2D.p1[1];
+      if (t2D.p2[1] < t2D.p3[1]){
+        v2.x = t2D.p2[0];
+        v2.y = t2D.p2[1];
+        v3.x = t2D.p3[0];
+        v3.y = t2D.p3[1];
+      } else {
+        v2.x = t2D.p3[0];
+        v2.y = t2D.p3[1];
+        v3.x = t2D.p2[0];
+        v3.y = t2D.p2[1];
+      }
+    } else {
+      v1.x = t2D.p3[0];
+      v1.y = t2D.p3[1];
+      v2.x = t2D.p1[0];
+      v2.y = t2D.p1[1];
+      v3.x = t2D.p2[0];
+      v3.y = t2D.p2[1];
+    }
+      
+  } else {
+    if (t2D.p2[1] < t2D.p3[1]){
+      v1.x = t2D.p2[0];
+      v1.y = t2D.p2[1];
+      if (t2D.p1[1] < t2D.p3[1]){
+        v2.x = t2D.p1[0];
+        v2.y = t2D.p1[1];
+        v3.x = t2D.p3[0];
+        v3.y = t2D.p3[1];
+      } else {
+        v2.x = t2D.p3[0];
+        v2.y = t2D.p3[1];
+        v3.x = t2D.p1[0];
+        v3.y = t2D.p1[1];
+      }
+    } else {
+      v1.x = t2D.p3[0];
+      v1.y = t2D.p3[1];
+      v2.x = t2D.p2[0];
+      v2.y = t2D.p2[1];
+      v3.x = t2D.p1[0];
+      v3.y = t2D.p1[1];
+    }
+
+  }
+  /* here we know that v1.y <= v2.y <= v3.y */
+  SDL_SetRenderDrawColor(renderer, t2D.color.r, t2D.color.g, t2D.color.b, 255);
+  if (v2.y == v3.y){
+    fillBottomFlatTriangle(v1, v2, v3, renderer);
+  } else if (v1.y == v2.y){
+    fillTopFlatTriangle(v1, v2, v3, renderer);
+  } else{
+    Vertice v4;
+    v4.x = (v1.x + ((v2.y - v1.y) / (v3.y - v1.y)) * (v3.x - v1.x));
+    v4.y = v2.y;
+    fillBottomFlatTriangle(v1, v2, v4, renderer);
+    fillTopFlatTriangle(v2, v4, v3, renderer);
+  }
+}
+
+
 void quitEcran(){
   SDL_Quit();
 }
-
-void dessinerTriangle(SDL_Renderer *renderer, triangle2D* t2D){
-  //dessine un triangle 2d
-  //on suppose que le triangle a deja été porté aux coordonnées de l
-  // 'ecran , ex : p[0] = 200; 300
-  int maxX;
-  int maxY;
-  int minX;
-  int minY;
-
-  maxX = t2D->p1[0];
-  maxY = t2D->p1[1];
-  minX = t2D->p1[0];
-  minY = t2D->p1[1];
-
-  if (t2D->p2[0] > maxX){
-    maxX = t2D->p2[0];
-  } else if (t2D->p2[0] < minX){
-    minX = t2D->p2[0];
-  }
-
-  if (t2D->p2[1] > maxY){
-    maxY = t2D->p2[1];
-  } else if (t2D->p2[1] < minY){
-    minY = t2D->p2[1];
-  }
-
-  if (t2D->p3[0] > maxX){
-    maxX = t2D->p3[0];
-  } else if (t2D->p3[0] < minX){
-    minX = t2D->p3[0];
-  }
-
-  if (t2D->p3[1] > maxY){
-    maxY = t2D->p3[1];
-  } else if (t2D->p3[1] < minY){
-    minY = t2D->p3[1];
-  }
-
-  //on check pas en dehors de l'écran:
-  if (maxX > 640){
-    maxX = 640;
-  } 
-  if (minX < 0){
-    minX = 0;
-  }
-  if (maxY > 480){
-    maxY = 480;
-  } 
-  if (minY < 0){
-    minY = 0;
-  }
-
-  //on sait que les pixels à examiner seront entre minX - maxX, id Y
-  Point p;
-  Point v1;
-  Point v2;
-  Point v3;
-
-  v1.x = t2D->p1[0];
-  v1.y = t2D->p1[1];
-
-  v2.x = t2D->p2[0];
-  v2.y = t2D->p2[1];
-
-  v3.x = t2D->p3[0];
-  v3.y = t2D->p3[1];
-
-  SDL_SetRenderDrawColor(renderer, t2D->color.r, t2D->color.g, t2D->color.b, 255);
-  
-  for (int x = minX; x <= maxX; x++){
-    for (int y = minY; y <= maxY; y++){
-      p.x = (double) x;
-      p.y = (double) y;
-      
-      if (IsPointInTri(&p, &v1, &v2, &v3)){
-        SDL_RenderDrawPoint(renderer, x, y);
-      }
-    }
-  }
-}
-
 
 void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int tailleMonde){
   //il va d'abord falloir trier pour afficher le plus proche en dernier...  
@@ -377,7 +412,7 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
     multiplicationScalaire(&gamma, -1);
     add(&barycentre, &gamma, &barycentre);//barycentre dans le repere camera
 
-    if (scalaire(&camera->direction, &barycentre) <0){
+    if (scalaire(&camera->direction, &barycentre) < 0){
       index[i] = distanceMax;
     } else{
       index[i] = norme(&barycentre);
@@ -395,9 +430,8 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
   triangle2D temp;
 
   for (int k = 0; k < tailleMonde; k++){
-
     projetterT3DPersp(&temp, &sorted[tailleMonde - k - 1], camera);//on affiche les plus loin en premier
-    dessinerTriangle(renderer, &temp);// LONG quand grand triangle
+    drawTriangle(renderer, temp);
   }
   SDL_RenderPresent(renderer);
 }
@@ -520,10 +554,23 @@ int main(){
   loadWorld(monde);
 
   //RUN
+  struct timeval tv1;
+  struct timeval tv2;
+  long deltaTime = 0;
+  double fps;
+
   int continuer = 1;
   SDL_Event event;
 
   while (continuer){
+    gettimeofday(&tv1, NULL);
+    deltaTime = tv1.tv_usec - tv2.tv_usec;
+    if (deltaTime > 0){
+      fps = 1000000/deltaTime;
+      printf("%f\n", fps);
+    }
+    gettimeofday(&tv2, NULL);
+
     clearEcran(renderer);
     renderMonde(renderer, &camera, monde, tailleMonde);
     SDL_PollEvent(&event);
