@@ -178,19 +178,6 @@ int indexMin(double tableau[], int tailleTableau){
   return minIndex;
 }
 
-double max(double tableau[], int tailleTableau){
-  double max;
-  max = (double) 0;
-  for (int k; k<tailleTableau; k++){
-    if (tableau[k] > max){
-      max = tableau[k];
-    }
-  }
-  return max;
-}
-
-
-
 //--------------------------------------------CAMERA
 
 //FONCTIONS
@@ -323,6 +310,9 @@ void fillTopFlatTriangle(Vertice v1, Vertice v2, Vertice v3, SDL_Renderer* rende
 void drawTriangle(SDL_Renderer* renderer, triangle2D t2D){
   //On crée les vertices en triant au passage
   //Le code est fat mais c'est pour plus de vitesse
+  if (t2D.display == 0){
+    return;
+  }
   Vertice v1;
   Vertice v2;
   Vertice v3;
@@ -422,8 +412,6 @@ void renderMonde(SDL_Renderer *renderer, camera* camera, triangle3D monde[], int
     } else{
       index[i] = norme(&barycentre);
     }
-
-    
   }
 
   for (int i = 0; i < tailleMonde; i++){//tri par insertion
@@ -484,7 +472,7 @@ void processEvent(SDL_Event event, camera *camera, int *continuer){
             break;
           case SDLK_d:
             delta = camera->u;
-            multiplicationScalaire(&delta, 0.3);
+            multiplicationScalaire(&delta, 1);
             add(&camera->position, &delta , &camera->position);
             break;
           case SDLK_a:
@@ -500,11 +488,37 @@ void processEvent(SDL_Event event, camera *camera, int *continuer){
     }
 }
 
-void loadWorld(triangle3D monde[]){
-  //Charge le monde depuis WORLD
+int main(){
+
+  //INITIALISATION --------------------------
+  camera camera;
+  camera.position.x = -10;
+  camera.position.y = 7;
+  camera.position.z = 10;
+  camera.direction.x = 1;
+  camera.direction.y = 0;
+  camera.direction.z = 0;
+  actualiserUV(&camera);
+
+  SDL_Window *ecran;
+  SDL_Renderer *renderer;
+
+  ecran = SDL_CreateWindow("Madfihr", 20, 20, 640, 480, SDL_WINDOW_SHOWN);
+  renderer = SDL_CreateRenderer(ecran, -1, SDL_RENDERER_ACCELERATED);
+
+  //CREATION DU MONDE -----------------------
+
   FILE* in_file = fopen("WORLD", "r"); 
 
   char line[100];
+  fgets(line, 100, in_file);
+
+  int tailleMonde;//première ligne donne le nombre de triangles
+  sscanf(line, "%i", &tailleMonde);
+
+  triangle3D *monde;
+  monde = malloc(tailleMonde*sizeof(triangle3D));
+
   int i = 0; 
   int color = 0;
 
@@ -531,34 +545,9 @@ void loadWorld(triangle3D monde[]){
     }
     i++;
   } 
-  
-}
 
-int main(){
 
-  //INITIALISATION
-  camera camera;
-  camera.position.x = -10;
-  camera.position.y = 7;
-  camera.position.z = 10;
-  camera.direction.x = 1;
-  camera.direction.y = 0;
-  camera.direction.z = 0;
-  actualiserUV(&camera);
-
-  SDL_Window *ecran;
-  SDL_Renderer *renderer;
-
-  ecran = SDL_CreateWindow("Madfihr", 20, 20, 640, 480, SDL_WINDOW_SHOWN);
-  renderer = SDL_CreateRenderer(ecran, -1, SDL_RENDERER_ACCELERATED);
-
-  //Création du monde
-  
-  triangle3D monde[30];
-  int tailleMonde = 30;
-  loadWorld(monde);
-
-  //RUN
+  //RUN -------------------------------------
   struct timeval tv1;
   struct timeval tv2;
   long deltaTime = 0;
