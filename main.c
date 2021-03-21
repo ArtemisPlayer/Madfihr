@@ -190,6 +190,7 @@ double max(double tableau[], int tailleTableau){
 }
 
 
+
 //--------------------------------------------CAMERA
 
 //FONCTIONS
@@ -294,8 +295,10 @@ void fillBottomFlatTriangle(Vertice v1, Vertice v2, Vertice v3, SDL_Renderer* re
   float curx1 = v1.x;
   float curx2 = v1.x;
 
-  for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++){
-    SDL_RenderDrawLine(renderer, (int)curx1, scanlineY, (int)curx2, scanlineY);
+  for (int scanlineY = v1.y; scanlineY <= v2.y && scanlineY <= 480; scanlineY++){
+    if (scanlineY > 0){
+      SDL_RenderDrawLine(renderer, (int)curx1, scanlineY, (int)curx2, scanlineY);
+    }
     curx1 += invslope1;
     curx2 += invslope2;
   }
@@ -308,8 +311,10 @@ void fillTopFlatTriangle(Vertice v1, Vertice v2, Vertice v3, SDL_Renderer* rende
   float curx1 = v3.x;
   float curx2 = v3.x;
 
-  for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--){
-    SDL_RenderDrawLine(renderer, (int)curx1, scanlineY, (int)curx2, scanlineY);
+  for (int scanlineY = v3.y; scanlineY > v1.y && scanlineY > 0; scanlineY--){
+    if (scanlineY < 480){
+      SDL_RenderDrawLine(renderer, (int)curx1, scanlineY, (int)curx2, scanlineY);
+    }
     curx1 -= invslope1;
     curx2 -= invslope2;
   }
@@ -561,15 +566,23 @@ int main(){
 
   int continuer = 1;
   SDL_Event event;
+  int counter = 0;
 
   while (continuer){
-    gettimeofday(&tv1, NULL);
-    deltaTime = tv1.tv_usec - tv2.tv_usec;
-    if (deltaTime > 0){
-      fps = 1000000/deltaTime;
-      printf("%f\n", fps);
+
+    if (counter == 100){
+      gettimeofday(&tv1, NULL);
+      deltaTime = tv1.tv_usec - tv2.tv_usec;
+      if (deltaTime > 0){
+        fps = 100 * 1000000/deltaTime;
+        printf("%f\n", fps);
+      }
+      gettimeofday(&tv2, NULL);
+      counter = 0;
+    } else {
+      counter++;
     }
-    gettimeofday(&tv2, NULL);
+    
 
     clearEcran(renderer);
     renderMonde(renderer, &camera, monde, tailleMonde);
