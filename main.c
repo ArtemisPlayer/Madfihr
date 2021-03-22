@@ -220,7 +220,6 @@ void projetterT3DPersp(triangle2D* t2D, triangle3D* t3D, camera* camera){
   double p[2];
 
   int checksum = 0;
-
   checksum += projeterPersp(&t3D->A, p, camera);
   t2D->p1[0] = p[0]*multiplicateurX + 320;
   t2D->p1[1] = p[1]*multiplicateurY + 240;
@@ -416,77 +415,47 @@ void clearEcran(SDL_Renderer *renderer){
 
 //--------------------------------------------MAIN
 
-void processEvent(SDL_Event event, camera *camera, int *continuer){
+void processEvent(SDL_Event event, int *continuer, camera *camera){
   //Gère les évènements clavier
   vect delta; //utile pour les mvts
 
-  vect origine;
+  const Uint8* keystate;
+  keystate = SDL_GetKeyboardState(NULL);
+  if(keystate[SDL_SCANCODE_LEFT]){
+    delta = camera->u;
+    multiplicationScalaire(&delta, 0.01);
+    add(&camera->position, &delta , &camera->position);
+  }
+  if(keystate[SDL_SCANCODE_RIGHT]){
+    delta = camera->u;
+    multiplicationScalaire(&delta, -0.01);
+    add(&camera->position, &delta , &camera->position);
+  }
+
   double x;
   x = ((double)event.motion.x-320)/300;
-  origine.x = cos(x);
-  origine.y = 0;
-  origine.z = sin(x); 
 
-  vect base;
-  base.x = 1;
-  base.y = 0;
-  base.z = 0;
-  rotate(&base, &camera->v, ((double)event.motion.x-320)/300);
-  
-  //on ne fait rien avec base et origine car ça bug sans raison
+  camera->direction.x = cos(x);
+  camera->direction.y = 0;
+  camera->direction.z = sin(x); 
+
+  printVect(&camera->direction);
 
   switch(event.type)
-    {
-      case SDL_QUIT:
+     {
+       case SDL_QUIT:
         *continuer = 0;
+     }
 
-      case SDL_KEYDOWN:
-        switch (event.key.keysym.sym){
-          case SDLK_LSHIFT:
-            camera->position.y += 0.01;
-            break;
-          case SDLK_LCTRL:
-            camera->position.y -= 0.01;
-            break;
-          case SDLK_z:
-            delta = camera->direction;
-            multiplicationScalaire(&delta, 1);
-            add(&camera->position, &delta , &camera->position);
-            break;
-          case SDLK_s:
-            delta = camera->direction;
-            multiplicationScalaire(&delta, -1);
-            add(&camera->position, &delta , &camera->position);
-            break;
-          case SDLK_q:
-            delta = camera->u;
-            multiplicationScalaire(&delta, -1);
-            add(&camera->position, &delta , &camera->position);
-            break;
-          case SDLK_d:
-            delta = camera->u;
-            multiplicationScalaire(&delta, 1);
-            add(&camera->position, &delta , &camera->position);
-            break;
-          case SDLK_a:
-            //rotate left
-            rotate(&camera->direction, &camera->v, 0.05);
-            break;
-          case SDLK_e:
-            //rotate right
-            rotate(&camera->direction, &camera->v, -0.05);
-            break;
-        }
-        actualiserUV(camera);
-    }
+  actualiserUV(camera);
 }
 
 int main(){
 
   //INITIALISATION --------------------------
   camera camera;
-  camera.position.x = -10;
-  camera.position.y = 7;
+  camera.position.x = -30;
+  camera.position.y = 5;
   camera.position.z = 10;
   camera.direction.x = 1;
   camera.direction.y = 0;
@@ -538,28 +507,26 @@ int main(){
 
   int continuer = 1;
   SDL_Event event;
-  int counter = 0;
 
   while (continuer){
 
-    if (counter == 100){
+
+    gettimeofday(&tv1, NULL);
+    deltaTime = tv1.tv_usec - tv2.tv_usec;
+    while (1000000/deltaTime> 120){
       gettimeofday(&tv1, NULL);
       deltaTime = tv1.tv_usec - tv2.tv_usec;
-      if (deltaTime > 0){
-        fps = 100 * 1000000/deltaTime;
-        printf("%f\n", fps);
-      }
-      gettimeofday(&tv2, NULL);
-      counter = 0;
-    } else {
-      counter++;
     }
     
-
+    fps = 1000000/deltaTime;
+    //printf("%f\n", fps);
+    
+    gettimeofday(&tv2, NULL);
+      
     clearEcran(renderer);
     renderMonde(renderer, &camera, monde, tailleMonde);
-    SDL_PollEvent(&event);
-    processEvent(event, &camera, &continuer);
+    SDL_WaitEvent(&event);
+    processEvent(event, &continuer, &camera);
   }
 
   quitEcran();
